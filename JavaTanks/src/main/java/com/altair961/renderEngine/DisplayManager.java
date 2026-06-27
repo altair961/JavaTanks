@@ -1,37 +1,66 @@
 package com.altair961.renderEngine;
+
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
-import org.lwjgl.glfw.GLFWVidMode;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.system.MemoryUtil;
+import org.lwjgl.opengl.GL;
 
 public class DisplayManager {
+    private static long window;
+
     private static final int WIDTH = 1280;
     private static final int HEIGHT = 720;
     private static final int FPS_CAP = 120;
 
-    public static void createDisplay(){
-        ContextAttribs attribs = new ContextAttribs(3,2);
-        attribs.withForwardCompatible(true);
-        attribs.withProfileCore(true);
+    public static void createWindow() {
+        GLFWErrorCallback.createPrint(System.err).set();
 
-        try {
-            Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
-            Display.create(new PixelFormat(), attribs);
-            Display.setTitle("Our First Display!");
-        } catch (LWJGLException e) {
-            e.printStackTrace();
+        if (!GLFW.glfwInit()) {
+            throw new IllegalStateException("Unable to initialize GLFW");
         }
 
-        GL11.glViewport(0, 0, WIDTH, HEIGHT);
+        GLFW.glfwDefaultWindowHints();
+
+        GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GLFW.GLFW_FALSE);
+        GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, GLFW.GLFW_FALSE);
+
+        window = GLFW.glfwCreateWindow(
+                WIDTH,
+                HEIGHT,
+                "Java Tanks",
+                0,
+                0);
+
+        if (window == 0) {
+            throw new RuntimeException("Failed to create GLFW window");
+        }
+
+        GLFW.glfwMakeContextCurrent(window);
+
+        GLFW.glfwSwapInterval(1);
+
+        GLFW.glfwShowWindow(window);
+
+        GL.createCapabilities();
     }
 
     public static void updateDisplay() {
-        Display.sync(FPS_CAP);
-        Display.update();
+
+        GLFW.glfwSwapBuffers(window);
+
+        GLFW.glfwPollEvents();
     }
 
     public static void closeDisplay() {
-        Display.destroy();
+
+        GLFW.glfwDestroyWindow(window);
+
+        GLFW.glfwTerminate();
+
+        GLFW.glfwSetErrorCallback(null).free();
+    }
+
+    public static boolean isCloseRequested() {
+
+        return GLFW.glfwWindowShouldClose(window);
     }
 }

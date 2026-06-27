@@ -26,5 +26,5 @@ dependencies {
 }
 
 application {
-    mainClass = 'org.example.Main'
+    mainClass = 'com.altair961.engineTester.MainGameLoop'
 }
