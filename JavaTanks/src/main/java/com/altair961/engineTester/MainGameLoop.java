@@ -4,7 +4,7 @@ import com.altair961.renderEngine.DisplayManager;
 
 public class MainGameLoop {
     public static void main(String[] args) {
-        DisplayManager.createWindow();
+        DisplayManager.createDisplay();
 
         while(!DisplayManager.isCloseRequested()) {
             // game logic
